@@ -26,8 +26,22 @@ def main():
     #initialize screen
     pygame.init()
     game_board = pygame.display.set_mode(size)
-    game_board.fill(background_color)
     pygame.display.set_caption('2048')
+
+    #set background
+    background = pygame.Surface(size)
+    #converting the background speeds up rendering
+    background = background.convert()
+    background.fill(background_color)
+
+    #display text - this is not working.
+    font = pygame.font.Font(None, 36)
+    text = font.render("Let's Play 2048!", 1, tile_colors[2048])
+    textpos = text.get_rect()
+    textpos.center = background.get_rect().center
+    background.blit(text, textpos)
+
+    game_board.blit(background, (0,0))
     pygame.display.update()
 
 main()
@@ -52,7 +66,6 @@ while running:
                 running = False
             else:
                 print("That is not a valid input.")
-    
     
 
 #quit game while out of event loop
