@@ -21,6 +21,7 @@ tile_colors = {
     512:(190,124,77),
     1024: (196,32,33), 
     2048: (247,92,3)} 
+tiles = []
 
 def main():
     #initialize screen
@@ -34,17 +35,29 @@ def main():
     background = background.convert()
     background.fill(background_color)
 
-    #display text - this is not working.
+    #display text
+    #   Step 1: Set font
     font = pygame.font.Font(None, 36)
-    text = font.render("Let's Play 2048!", 1, tile_colors[2048])
+    #   Step 2: Set text content, aliased(?), and color
+    text = font.render("Let's Play 2048!", True, tile_colors[2048])
+    #   Step 3: set rectangle as container for text
     textpos = text.get_rect()
+    #   Step 4: position the text
     textpos.center = background.get_rect().center
+    #   Step 5: render the text to the background
     background.blit(text, textpos)
-
+    #   Step 6: render the background to the game board
     game_board.blit(background, (0,0))
+
+    #update the display
     pygame.display.update()
 
-main()
+class Tile:
+    def __init__(self, value, color) -> None:
+        self.value = value
+        self.color = color
+
+def loadGrid():
 
 #event loop
 while running:
@@ -61,7 +74,7 @@ while running:
                 print("Up")
             elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
                 print("Down")
-            elif event.key== pygame.K_SPACE:
+            elif event.key == pygame.K_ESCAPE:
                 print("You quit")
                 running = False
             else:
