@@ -1,5 +1,6 @@
 import pygame
 import random
+import math
 
 #create variable to control when game is running
 running = True
@@ -71,6 +72,16 @@ def loadGrid():
             j+=1
         j=0
         i+=1
+    # randomly generate 2 tiles to start with value of 2
+    rand_tiles = random.sample(range(tiles_across*tiles_across), 2)
+    print(rand_tiles)
+    for tile in rand_tiles:
+        row = math.floor(tile/tiles_across)
+        column = tile%tiles_across
+        print("Tile: ", tile, "Row: ", row, "Column: ", column)
+        # assign value of rand tiles to 2
+        tiles[row][column].value = 2
+        tiles[row][column].color = tile_colors[2]
     return tiles
 
 def printGrid():
