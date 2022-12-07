@@ -59,7 +59,7 @@ class Tile:
         self.color = color
 
     def toString(self):
-        return(str(self.value))
+        return("Value: ", str(self.value),"; Color: ", str(self.color))
 
 def loadGrid():
     i = 0
@@ -73,8 +73,15 @@ def loadGrid():
         i+=1
     return tiles
 
+def printGrid():
+    for row in tiles:
+        print("New Row")
+        for tile in row:
+            print(tile.toString())
+
 #event loop
 main()
+printGrid()
 
 while running:
     for event in pygame.event.get():
