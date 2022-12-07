@@ -51,15 +51,31 @@ def main():
 
     #update the display
     pygame.display.update()
+    loadGrid()
 
 class Tile:
     def __init__(self, value, color) -> None:
         self.value = value
         self.color = color
 
+    def toString(self):
+        return(str(self.value))
+
 def loadGrid():
+    i = 0
+    j = 0
+    while i < tiles_across:
+        tiles.append([])
+        while j < tiles_across:
+            tiles[i].append(Tile(0, tile_colors[0]))
+            j+=1
+        j=0
+        i+=1
+    return tiles
 
 #event loop
+main()
+
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
