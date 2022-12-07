@@ -61,6 +61,22 @@ class Tile:
 
     def toString(self):
         return("Value: ", str(self.value),"; Color: ", str(self.color))
+    
+    def clear():
+        #use to reset value and color of tile
+        Tile.value = 0
+        Tile.color = tile_colors[0]
+
+    def merge():
+        #multiply value by 2 and increment color
+        currentValue = Tile.value
+        Tile.value = currentValue*2
+        Tile.color = tile_colors[currentValue*2]
+
+    def shift(newValue):
+        #use to move value of tile into empty tile
+        Tile.value = newValue
+        Tile.color = tile_colors[newValue]
 
 def loadGrid():
     i = 0
