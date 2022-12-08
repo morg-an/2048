@@ -100,8 +100,17 @@ def loadGrid():
         tiles[row][column].color = tile_colors[2]
     return tiles
 
-#random generate new tile for each turn
+def isEndgame():
+# identify if all tiles contain value >= 2
+    endgame = True
+    for row in tiles:
+        for tile in row:
+            if tile.value == 0:
+                endgame = False
+    return endgame
+
 def newTile():
+#random generate new tile for each turn
     rand_x = random.randint(0, tiles_across-1)
     rand_y = random.randint(0, tiles_across-1)
     #if the randomly generated tile is not zero, generate a new random tile
@@ -123,9 +132,6 @@ def printGrid():
 #event loop
 main()
 printGrid()
-print(newTile())
-print(newTile())
-printGrid()
 
 while running:
     for event in pygame.event.get():
@@ -146,6 +152,13 @@ while running:
                 running = False
             else:
                 print("That is not a valid input.")
+            if isEndgame() == False:
+                newTile()
+                printGrid()
+            else:
+                running = False
+                print("You Lose")
+                pygame.quit()
     
 
 #quit game while out of event loop
