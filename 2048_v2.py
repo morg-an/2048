@@ -90,15 +90,29 @@ def loadGrid():
         i+=1
     # randomly generate 2 tiles to start with value of 2
     rand_tiles = random.sample(range(tiles_across*tiles_across), 2)
-    print(rand_tiles)
     for tile in rand_tiles:
+        # calculates what row the random tile is in by dividing the rand number by the grid width
         row = math.floor(tile/tiles_across)
+        # calculates the column of the rand tile by finding the remainder after dividing by grid width
         column = tile%tiles_across
-        print("Tile: ", tile, "Row: ", row, "Column: ", column)
         # assign value of rand tiles to 2
         tiles[row][column].value = 2
         tiles[row][column].color = tile_colors[2]
     return tiles
+
+#random generate new tile for each turn
+def newTile():
+    rand_x = random.randint(0, tiles_across-1)
+    rand_y = random.randint(0, tiles_across-1)
+    #if the randomly generated tile is not zero, generate a new random tile
+    while tiles[rand_x][rand_y].value != 0:
+        rand_x = random.randint(0, tiles_across-1)
+        rand_y = random.randint(0, tiles_across-1)
+    #set the value & color of new randomly generated tile. 
+    tiles[rand_x][rand_y].value = 2
+    tiles[rand_x][rand_y].color = tile_colors[2]
+    return tiles[rand_x][rand_y]
+
 
 def printGrid():
     for row in tiles:
@@ -108,6 +122,9 @@ def printGrid():
 
 #event loop
 main()
+printGrid()
+print(newTile())
+print(newTile())
 printGrid()
 
 while running:
