@@ -55,12 +55,14 @@ def main():
     loadGrid()
 
 class Tile:
-    def __init__(self, value, color) -> None:
+    def __init__(self, value, color, row, column) -> None:
         self.value = value
         self.color = color
+        self.row = row
+        self.column = column
 
     def toString(self):
-        return("Value: ", str(self.value),"; Color: ", str(self.color))
+        return("Value: ", str(self.value),"; Color: ", str(self.color), "; Row: ", str(self.row), "; Column: ", str(self.column))
     
     def clear():
         #use to reset value and color of tile
@@ -84,7 +86,7 @@ def loadGrid():
     while i < tiles_across:
         tiles.append([])
         while j < tiles_across:
-            tiles[i].append(Tile(0, tile_colors[0]))
+            tiles[i].append(Tile(0, tile_colors[0], i, j))
             j+=1
         j=0
         i+=1
@@ -129,6 +131,52 @@ def printGrid():
         for tile in row:
             print(tile.toString())
 
+def left():
+    for row in tiles:
+        for tile in row:
+            if tile.column != 0:
+                if tile.value != 0:
+                    comp_tile = tiles[tile.row][tile.column-1]
+                    #find comparison tile
+                    if comp_tile.value == tile.value:
+                        # if comparison tile has the same value, merge
+                        comp_tile.value = tile.value*2
+                        comp_tile.color = tile_colors[comp_tile.value]
+                        tile.value = 0
+                        tile.color = tile_colors[0]
+                        print("merged")
+                        printGrid()
+                    if comp_tile.value == 0:
+                    #if comparison is empty
+                        comp_tile.value = tile.value
+                        comp_tile.color = tile.color
+                        tile.value = 0
+                        tile.color = tile_colors[0]
+                        print("shifted")
+                        printGrid()
+        #write something to shift all rows to the far left
+
+def right():
+    for row in tiles: 
+        for tile in row:
+            if tile.column != tiles_across-1:
+                pass
+                #do something
+
+def up():
+    for row in tiles:
+        for tile in row:
+            if tile.row != 0:
+                pass
+                #do something
+
+def down():
+    for row in tiles:
+        for tile in row:
+            if tile.row != tiles_across-1:
+                pass
+                #do something
+
 #event loop
 main()
 printGrid()
@@ -141,12 +189,16 @@ while running:
             #listen for key presses
             if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                 print("Right")
+                right()
             elif event.key == pygame.K_LEFT or event.key == pygame.K_a:
                 print("Left")
+                left()
             elif event.key == pygame.K_UP or event.key == pygame.K_w:
                 print("Up")
+                up()
             elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
                 print("Down")
+                down()
             elif event.key == pygame.K_ESCAPE:
                 print("You quit")
                 running = False
@@ -157,7 +209,7 @@ while running:
                 printGrid()
             else:
                 running = False
-                print("You Lose")
+                print("Game Over")
                 pygame.quit()
     
 
