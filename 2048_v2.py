@@ -122,6 +122,7 @@ def newTile():
     #set the value & color of new randomly generated tile. 
     tiles[rand_x][rand_y].value = 2
     tiles[rand_x][rand_y].color = tile_colors[2]
+    print("Added new tile")
     return tiles[rand_x][rand_y]
 
 
@@ -133,7 +134,8 @@ def printGrid():
 
 def left():
     for row in tiles:
-        for tile in row:
+        for tile in reversed(row):
+            #Need to reverse the order
             if tile.column != 0:
                 if tile.value != 0:
                     comp_tile = tiles[tile.row][tile.column-1]
