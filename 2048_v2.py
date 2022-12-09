@@ -74,8 +74,6 @@ def shift(fromTile, toTile):
     toTile.value = fromTile.value
     toTile.color = fromTile.color
     clear(fromTile)
-    # fromTile.value = 0
-    # fromTile.color = tile_colors[0]
     print("shifted")
     printGrid()
 
@@ -84,8 +82,6 @@ def merge(fromTile, toTile):
     toTile.value = fromTile.value*2
     toTile.color = tile_colors[toTile.value]
     clear(fromTile)
-    # fromTile.value = 0
-    # fromTile.color = tile_colors[0]
     print("merged")
     printGrid()
 
@@ -131,7 +127,7 @@ def newTile():
     #set the value & color of new randomly generated tile. 
     tiles[rand_x][rand_y].value = 2
     tiles[rand_x][rand_y].color = tile_colors[2]
-    print("Added new tile")
+    print("add value to random empty tile")
     return tiles[rand_x][rand_y]
 
 
