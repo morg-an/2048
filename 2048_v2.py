@@ -7,6 +7,7 @@ running = True
 
 #display variables
 size = width, height = (500, 500)
+game_board = pygame.display.set_mode(size)
 tiles_across = 3
 background_color = (245, 223, 187)
 tile_colors = {
@@ -33,7 +34,6 @@ tile_size = generateTileSize(tiles_across)
 def main():
     #initialize screen
     pygame.init()
-    game_board = pygame.display.set_mode(size)
     pygame.display.set_caption('2048')
 
     #set background
@@ -46,13 +46,13 @@ def main():
     #   Step 1: Set font
     font = pygame.font.Font(None, 36)
     #   Step 2: Set text content, aliased(?), and color
-    text = font.render("Let's Play 2048!", True, tile_colors[2048])
+    #text = font.render("Let's Play 2048!", True, tile_colors[2048])
     #   Step 3: set rectangle as container for text
-    textpos = text.get_rect()
+    #textpos = text.get_rect()
     #   Step 4: position the text
-    textpos.center = background.get_rect().center
+    #textpos.center = background.get_rect().center
     #   Step 5: render the text to the background
-    background.blit(text, textpos)
+    #background.blit(text, textpos)
     #   Step 6: render the background to the game board
     game_board.blit(background, (0,0))
 
@@ -61,11 +61,7 @@ def main():
     loadGrid()
 
     #draw tiles
-    for row in tiles:
-        for tile in row:
-            pygame.draw.rect(game_board, tile.color, (tile.coordinate[0], tile.coordinate[1], tile_size[0], tile_size[1]))
-    
-    pygame.display.update()
+    draw(game_board)
 
 class Tile:
     def __init__(self, value, color, row, column) -> None:
@@ -82,6 +78,11 @@ class Tile:
         "; Column: ", str(self.column), 
         "; Coordinate: ", str(self.coordinate))
 
+def draw(game_board):
+    for row in tiles:
+        for tile in row:
+            pygame.draw.rect(game_board, tile.color, (tile.coordinate[0], tile.coordinate[1], tile_size[0], tile_size[1]))
+    pygame.display.update()
 
 def clear(fromTile):
     #use to reset value and color of tile
@@ -209,13 +210,16 @@ while running:
             #listen for key presses
             if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                 right()
-                pygame.display.update()
+                draw(game_board)
             elif event.key == pygame.K_LEFT or event.key == pygame.K_a:
                 left()
+                draw(game_board)
             elif event.key == pygame.K_UP or event.key == pygame.K_w:
                 up()
+                draw(game_board)
             elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
                 down()
+                draw(game_board)
             elif event.key == pygame.K_ESCAPE:
                 print("You quit")
                 running = False
@@ -228,7 +232,6 @@ while running:
                 running = False
                 print("Game Over")
                 pygame.quit()
-        pygame.display.update()
     
 
 #quit game while out of event loop
