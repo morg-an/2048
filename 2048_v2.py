@@ -70,6 +70,7 @@ class Tile:
         self.row = row
         self.column = column
         self.coordinate = [int((width*.05)+(((width*.9)/tiles_across)*column)), int((height*.05)+(((height*.9)/tiles_across)*row))]
+        self.changed = False
 
     def toString(self):
         return("Value: ", str(self.value),
@@ -80,14 +81,13 @@ class Tile:
 
 def draw(game_board):
     font = pygame.font.Font(None, 36)
-
     for row in tiles:
         for tile in row:
             pygame.draw.rect(game_board, tile.color, (tile.coordinate[0], tile.coordinate[1], tile_size[0], tile_size[1]))
             text_surface = font.render(str(tile.value), False, (255, 255, 255))
             textpos = text_surface.get_rect()
             textpos.center = text_surface.get_rect().center
-            # text_surface.blit(text, textpos)
+            text_surface.blit(text_surface, textpos)
             game_board.blit(text_surface, (tile.coordinate))
     pygame.display.update()
 
@@ -108,11 +108,12 @@ def merge(fromTile, toTile):
     toTile.value = fromTile.value*2
     toTile.color = tile_colors[toTile.value]
     clear(fromTile)
+    toTile.changed = True
     print("merged")
     printGrid()
 
 def mergeOrShift(tile, comp_tile):
-    if comp_tile.value == tile.value:
+    if comp_tile.value == tile.value and tile.changed == False:
         merge(tile, comp_tile)
     if comp_tile.value == 0:
         shift(tile, comp_tile)
@@ -177,34 +178,78 @@ def printGrid():
         for tile in row:
             print(tile.toString())
 
+def reset():
+    for row in tiles:
+        for tile in row:
+            tile.changed = False
+
 def left():
+    for row in tiles:
+        for tile in reversed(row):
+            if tile.column != 0 and tile.value != 0:
+                comp_tile = tiles[tile.row][tile.column-1]
+                mergeOrShift(tile, comp_tile)
+    removeLeft()
+
+def removeLeft():
     for row in tiles:
         for tile in row:
             if tile.column != 0 and tile.value != 0:
                 comp_tile = tiles[tile.row][tile.column-1]
-                mergeOrShift(tile, comp_tile)
+                if comp_tile.value == 0:
+                    print("Removing Left")
+                    shift(tiles[tile.row][tile.column], comp_tile)
 
 def right():
     for row in tiles: 
-        for tile in reversed(row):
+        for tile in row:
             if tile.column != tiles_across-1 and tile.value !=0:
                 comp_tile = tiles[tile.row][tile.column+1]
                 mergeOrShift(tile, comp_tile)
+    removeRight()
+
+def removeRight():
+    for row in tiles:
+        for tile in reversed(row):
+            if tile.column != tiles_across-1 and tile.value != 0:
+                comp_tile = tiles[tile.row][tile.column +1]
+                if comp_tile.value == 0:
+                    print("Removing Right")
+                    shift(tiles[tile.row][tile.column], comp_tile)
 
 def up():
+    for row in reversed(tiles):
+        for tile in reversed(row):
+            if tile.row != 0 and tile.value != 0:
+                comp_tile = tiles[tile.row-1][tile.column]
+                mergeOrShift(tile, comp_tile)
+    removeUp()
+
+def removeUp():
     for row in tiles:
         for tile in row:
             if tile.row != 0 and tile.value != 0:
                 comp_tile = tiles[tile.row-1][tile.column]
-                mergeOrShift(tile, comp_tile)
+                if comp_tile.value == 0:
+                    print("Removing Up")
+                    shift(tiles[tile.row][tile.column], comp_tile)
 
 def down():
-    for row in reversed(tiles):
+    for row in tiles:
         for tile in row:
             if tile.row != tiles_across-1 and tile.value != 0:
                 comp_tile = tiles[tile.row+1][tile.column]
                 mergeOrShift(tile, comp_tile)
+    removeDown()
 
+def removeDown():
+    for row in tiles:
+        for tile in row:
+            if tile.row != tiles_across-1 and tile.value != 0:
+                comp_tile = tiles[tile.row+1][tile.column]
+                if comp_tile.value == 0:
+                    print("Removing Down")
+                    shift(tiles[tile.row][tile.column], comp_tile)
 #event loop
 main()
 printGrid()
@@ -217,29 +262,26 @@ while running:
             #listen for key presses
             if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                 right()
-                draw(game_board)
             elif event.key == pygame.K_LEFT or event.key == pygame.K_a:
                 left()
-                draw(game_board)
             elif event.key == pygame.K_UP or event.key == pygame.K_w:
                 up()
-                draw(game_board)
             elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
                 down()
-                draw(game_board)
             elif event.key == pygame.K_ESCAPE:
                 print("You quit")
                 running = False
             else:
                 print("That is not a valid input.")
+            reset()
             if isEndgame() == False:
                 newTile()
+                draw(game_board)
                 printGrid()
             else:
                 running = False
                 print("Game Over")
                 pygame.quit()
-    
 
 #quit game while out of event loop
 pygame.quit()
