@@ -24,6 +24,12 @@ tile_colors = {
     2048: (247,92,3)} 
 tiles = []
 
+def generateTileSize(tiles_across):
+    tile_size = (int((width*.8)/tiles_across), int((height*.8)/tiles_across))
+    return tile_size
+
+tile_size = generateTileSize(tiles_across)
+
 def main():
     #initialize screen
     pygame.init()
@@ -54,15 +60,27 @@ def main():
     pygame.display.update()
     loadGrid()
 
+    #draw tiles
+    for row in tiles:
+        for tile in row:
+            pygame.draw.rect(game_board, tile.color, (tile.coordinate[0], tile.coordinate[1], tile_size[0], tile_size[1]))
+    
+    pygame.display.update()
+
 class Tile:
     def __init__(self, value, color, row, column) -> None:
         self.value = value
         self.color = color
         self.row = row
         self.column = column
+        self.coordinate = [int((width*.05)+(((width*.9)/tiles_across)*column)), int((height*.05)+(((height*.9)/tiles_across)*row))]
 
     def toString(self):
-        return("Value: ", str(self.value),"; Color: ", str(self.color), "; Row: ", str(self.row), "; Column: ", str(self.column))
+        return("Value: ", str(self.value),
+        "; Color: ", str(self.color), 
+        "; Row: ", str(self.row), 
+        "; Column: ", str(self.column), 
+        "; Coordinate: ", str(self.coordinate))
 
 
 def clear(fromTile):
@@ -90,6 +108,14 @@ def mergeOrShift(tile, comp_tile):
         merge(tile, comp_tile)
     if comp_tile.value == 0:
         shift(tile, comp_tile)
+
+# def redraw():
+#     #redraw the tile
+#     pygame.draw.rect(game_board, tile[3], (tile[1][0], tile[1][1], tile_size[0], tile_size[1]))
+#     #redraw the comparison
+#     pygame.draw.rect(game_board, comparison[3], (comparison[1][0], comparison[1][1], tile_size[0], tile_size[1]))
+#     #display update
+#     pygame.display.update
 
 def loadGrid():
     i = 0
@@ -145,27 +171,27 @@ def printGrid():
 
 def left():
     for row in tiles:
-        for tile in reversed(row):
+        for tile in row:
             if tile.column != 0 and tile.value != 0:
                 comp_tile = tiles[tile.row][tile.column-1]
                 mergeOrShift(tile, comp_tile)
 
 def right():
     for row in tiles: 
-        for tile in row:
+        for tile in reversed(row):
             if tile.column != tiles_across-1 and tile.value !=0:
                 comp_tile = tiles[tile.row][tile.column+1]
                 mergeOrShift(tile, comp_tile)
 
 def up():
-    for row in reversed(tiles):
+    for row in tiles:
         for tile in row:
             if tile.row != 0 and tile.value != 0:
                 comp_tile = tiles[tile.row-1][tile.column]
                 mergeOrShift(tile, comp_tile)
 
 def down():
-    for row in tiles:
+    for row in reversed(tiles):
         for tile in row:
             if tile.row != tiles_across-1 and tile.value != 0:
                 comp_tile = tiles[tile.row+1][tile.column]
@@ -183,6 +209,7 @@ while running:
             #listen for key presses
             if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                 right()
+                pygame.display.update()
             elif event.key == pygame.K_LEFT or event.key == pygame.K_a:
                 left()
             elif event.key == pygame.K_UP or event.key == pygame.K_w:
@@ -201,6 +228,7 @@ while running:
                 running = False
                 print("Game Over")
                 pygame.quit()
+        pygame.display.update()
     
 
 #quit game while out of event loop
