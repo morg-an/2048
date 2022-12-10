@@ -85,6 +85,12 @@ def merge(fromTile, toTile):
     print("merged")
     printGrid()
 
+def mergeOrShift(tile, comp_tile):
+    if comp_tile.value == tile.value:
+        merge(tile, comp_tile)
+    if comp_tile.value == 0:
+        shift(tile, comp_tile)
+
 def loadGrid():
     i = 0
     j = 0
@@ -142,39 +148,28 @@ def left():
         for tile in reversed(row):
             if tile.column != 0 and tile.value != 0:
                 comp_tile = tiles[tile.row][tile.column-1]
-                #find comparison tile
-                if comp_tile.value == tile.value:
-                # if comparison tile has the same value, merge
-                    merge(tile, comp_tile)
-                if comp_tile.value == 0:
-                #if comparison is empty
-                    shift(tile, comp_tile)
-
-        #write something to shift all rows to the far left
+                mergeOrShift(tile, comp_tile)
 
 def right():
     for row in tiles: 
         for tile in row:
             if tile.column != tiles_across-1 and tile.value !=0:
                 comp_tile = tiles[tile.row][tile.column+1]
-                if comp_tile.value == tile.value:
-                    merge(tile, comp_tile)
-                if comp_tile.value == 0:
-                    shift(tile, comp_tile)
+                mergeOrShift(tile, comp_tile)
 
 def up():
-    for row in tiles:
+    for row in reversed(tiles):
         for tile in row:
-            if tile.row != 0:
-                pass
-                #do something
+            if tile.row != 0 and tile.value != 0:
+                comp_tile = tiles[tile.row-1][tile.column]
+                mergeOrShift(tile, comp_tile)
 
 def down():
     for row in tiles:
         for tile in row:
-            if tile.row != tiles_across-1:
-                pass
-                #do something
+            if tile.row != tiles_across-1 and tile.value != 0:
+                comp_tile = tiles[tile.row+1][tile.column]
+                mergeOrShift(tile, comp_tile)
 
 #event loop
 main()
@@ -187,16 +182,12 @@ while running:
         if event.type == pygame.KEYDOWN:
             #listen for key presses
             if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-                print("Right")
                 right()
             elif event.key == pygame.K_LEFT or event.key == pygame.K_a:
-                print("Left")
                 left()
             elif event.key == pygame.K_UP or event.key == pygame.K_w:
-                print("Up")
                 up()
             elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                print("Down")
                 down()
             elif event.key == pygame.K_ESCAPE:
                 print("You quit")
