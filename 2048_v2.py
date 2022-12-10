@@ -44,7 +44,7 @@ def main():
 
     #display text
     #   Step 1: Set font
-    font = pygame.font.Font(None, 36)
+    # font = pygame.font.Font(None, 36)
     #   Step 2: Set text content, aliased(?), and color
     #text = font.render("Let's Play 2048!", True, tile_colors[2048])
     #   Step 3: set rectangle as container for text
@@ -80,12 +80,15 @@ class Tile:
 
 def draw(game_board):
     font = pygame.font.Font(None, 36)
+
     for row in tiles:
         for tile in row:
             pygame.draw.rect(game_board, tile.color, (tile.coordinate[0], tile.coordinate[1], tile_size[0], tile_size[1]))
-            text = font.render(str(tile.value), True, (247,92,3))
-            textpos = text.get_rect()
-            textpos.center
+            text_surface = font.render(str(tile.value), False, (255, 255, 255))
+            textpos = text_surface.get_rect()
+            textpos.center = text_surface.get_rect().center
+            # text_surface.blit(text, textpos)
+            game_board.blit(text_surface, (tile.coordinate))
     pygame.display.update()
 
 def clear(fromTile):
