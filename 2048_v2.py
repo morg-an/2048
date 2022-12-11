@@ -8,7 +8,7 @@ running = True
 #display variables
 size = width, height = (500, 500)
 game_board = pygame.display.set_mode(size)
-tiles_across = 3
+tiles_across = 4
 background_color = (245, 223, 187)
 tile_colors = {
     0:(231, 213, 181), 
@@ -194,11 +194,10 @@ def left():
 def removeLeft():
     for row in tiles:
         for tile in row:
-            if tile.column != 0 and tile.value != 0:
-                comp_tile = tiles[tile.row][tile.column-1]
-                if comp_tile.value == 0:
-                    print("Removing Left")
-                    shift(tiles[tile.row][tile.column], comp_tile)
+            #check for zero value tiles that are not in the last column and where the tile to the right is non-zero
+            if tile.value == 0 and tile.column != tiles_across-1 and tiles[tile.row][tile.column+1].value != 0:
+                comp_tile = tiles[tile.row][tile.column+1]
+                shift(comp_tile, tile)
 
 def right():
     for row in tiles: 
@@ -211,15 +210,14 @@ def right():
 def removeRight():
     for row in tiles:
         for tile in reversed(row):
-            if tile.column != tiles_across-1 and tile.value != 0:
-                comp_tile = tiles[tile.row][tile.column +1]
-                if comp_tile.value == 0:
-                    print("Removing Right")
-                    shift(tiles[tile.row][tile.column], comp_tile)
+            #check for zero value tiles that are not in the first column and where the tile to the left is non-zero
+            if tile.value == 0 and tile.column != 0 and tiles[tile.row][tile.column-1].value != 0:
+                comp_tile = tiles[tile.row][tile.column-1]
+                shift(comp_tile, tile)
 
 def up():
     for row in reversed(tiles):
-        for tile in reversed(row):
+        for tile in row:
             if tile.row != 0 and tile.value != 0:
                 comp_tile = tiles[tile.row-1][tile.column]
                 mergeOrShift(tile, comp_tile)
@@ -228,11 +226,10 @@ def up():
 def removeUp():
     for row in tiles:
         for tile in row:
-            if tile.row != 0 and tile.value != 0:
-                comp_tile = tiles[tile.row-1][tile.column]
-                if comp_tile.value == 0:
-                    print("Removing Up")
-                    shift(tiles[tile.row][tile.column], comp_tile)
+            #check for zero value tiles that are not in the last row and where the tile below is non-zero
+            if tile.value == 0 and tile.row != tiles_across-1 and tiles[tile.row+1][tile.column].value != 0:
+                comp_tile = tiles[tile.row+1][tile.column]
+                shift(comp_tile, tile)
 
 def down():
     for row in tiles:
@@ -243,13 +240,12 @@ def down():
     removeDown()
 
 def removeDown():
-    for row in tiles:
+    for row in reversed(tiles):
         for tile in row:
-            if tile.row != tiles_across-1 and tile.value != 0:
-                comp_tile = tiles[tile.row+1][tile.column]
-                if comp_tile.value == 0:
-                    print("Removing Down")
-                    shift(tiles[tile.row][tile.column], comp_tile)
+            #check for zero value tiles that are not in the first row and where the tile above is non-zero
+            if tile.value == 0 and tile.row != 0 and tiles[tile.row-1][tile.column].value != 0:
+                comp_tile = tiles[tile.row-1][tile.column]
+                shift(comp_tile, tile)
 #event loop
 main()
 printGrid()
