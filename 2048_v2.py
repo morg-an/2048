@@ -70,6 +70,7 @@ class Tile:
         self.row = row
         self.column = column
         self.coordinate = [int((width*.05)+(((width*.9)/tiles_across)*column)), int((height*.05)+(((height*.9)/tiles_across)*row))]
+        #tile.changed is used to prevent the same file from merging twice on the same turn.
         self.changed = False
 
     def toString(self):
@@ -100,23 +101,30 @@ def shift(fromTile, toTile):
     toTile.value = fromTile.value
     toTile.color = fromTile.color
     clear(fromTile)
-    print("shifted")
+    print("Shifted")
     printGrid()
+    #set boolian to show that merge happened on keypress - used to verify before new rand tile generates.
+    return True
 
 def merge(fromTile, toTile):
     #multiply value by 2 and increment color
     toTile.value = fromTile.value*2
     toTile.color = tile_colors[toTile.value]
     clear(fromTile)
+    #mark that tile already changed to prevent the same tile from merging twice on same turn
     toTile.changed = True
-    print("merged")
+    print("Merged")
     printGrid()
+    #set boolian to show that merge happened on keypress - used to verify before new rand tile generates.
+    return True
 
 def mergeOrShift(tile, comp_tile):
     if comp_tile.value == tile.value and tile.changed == False:
-        merge(tile, comp_tile)
-    if comp_tile.value == 0:
-        shift(tile, comp_tile)
+        return(merge(tile, comp_tile))
+    elif comp_tile.value == 0:
+        return(shift(tile, comp_tile))
+    else:
+        return False
 
 # def redraw():
 #     #redraw the tile
@@ -184,12 +192,15 @@ def reset():
             tile.changed = False
 
 def left():
+    validTurn = False
     for row in tiles:
         for tile in reversed(row):
             if tile.column != 0 and tile.value != 0:
                 comp_tile = tiles[tile.row][tile.column-1]
-                mergeOrShift(tile, comp_tile)
+                if mergeOrShift(tile, comp_tile) == True:
+                    validTurn = True
     removeLeft()
+    return validTurn
 
 def removeLeft():
     for row in tiles:
@@ -200,12 +211,15 @@ def removeLeft():
                 shift(comp_tile, tile)
 
 def right():
+    validTurn = False
     for row in tiles: 
         for tile in row:
             if tile.column != tiles_across-1 and tile.value !=0:
                 comp_tile = tiles[tile.row][tile.column+1]
-                mergeOrShift(tile, comp_tile)
+                if mergeOrShift(tile, comp_tile) == True:
+                    validTurn = True
     removeRight()
+    return validTurn
 
 def removeRight():
     for row in tiles:
@@ -216,12 +230,15 @@ def removeRight():
                 shift(comp_tile, tile)
 
 def up():
+    validTurn = False
     for row in reversed(tiles):
         for tile in row:
             if tile.row != 0 and tile.value != 0:
                 comp_tile = tiles[tile.row-1][tile.column]
-                mergeOrShift(tile, comp_tile)
+                if mergeOrShift(tile, comp_tile) == True:
+                    validTurn = True
     removeUp()
+    return validTurn
 
 def removeUp():
     for row in tiles:
@@ -232,12 +249,15 @@ def removeUp():
                 shift(comp_tile, tile)
 
 def down():
+    validTurn = False
     for row in tiles:
         for tile in row:
             if tile.row != tiles_across-1 and tile.value != 0:
                 comp_tile = tiles[tile.row+1][tile.column]
-                mergeOrShift(tile, comp_tile)
+                if mergeOrShift(tile, comp_tile) == True:
+                    validTurn = True
     removeDown()
+    return validTurn
 
 def removeDown():
     for row in reversed(tiles):
@@ -248,22 +268,30 @@ def removeDown():
                 shift(comp_tile, tile)
 #event loop
 main()
-printGrid()
 
 while running:
     for event in pygame.event.get():
+        validTurn = False
         if event.type == pygame.QUIT:
             running = False
         if event.type == pygame.KEYDOWN:
             #listen for key presses
             if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-                right()
+                print("Right")
+                validTurn = right()
+                print("Valid Turn?", validTurn)
             elif event.key == pygame.K_LEFT or event.key == pygame.K_a:
-                left()
+                print("Left")
+                validTurn = left()
+                print("Valid Turn?", validTurn)
             elif event.key == pygame.K_UP or event.key == pygame.K_w:
-                up()
+                print("Up")
+                validTurn = up()
+                print("Valid Turn?", validTurn)
             elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                down()
+                print("Down")
+                validTurn = down()
+                print("Valid Turn?", validTurn)
             elif event.key == pygame.K_ESCAPE:
                 print("You quit")
                 running = False
@@ -271,9 +299,10 @@ while running:
                 print("That is not a valid input.")
             reset()
             if isEndgame() == False:
-                newTile()
+                if validTurn == True:
+                    #only generate new tile if last turn merged or shifted an existing tile.
+                    newTile()
                 draw(game_board)
-                printGrid()
             else:
                 running = False
                 print("Game Over")
