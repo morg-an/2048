@@ -1,3 +1,9 @@
+# STILL TO Fix:
+# Remove empty tiles at end of the turn does not work correctly when there are 2 or more '0' value tiles in a row. 
+# For example a row of [16, 0, 0, 4] will become [0, 16, 0, 4] after removeRight()
+
+# colors for 512 and 32 are too similar
+
 import pygame
 import random
 import math
@@ -58,7 +64,7 @@ def main():
 
     #update the display
     pygame.display.update()
-    loadGrid()
+    populateGrid()
 
     #draw tiles
     draw(game_board)
@@ -102,7 +108,7 @@ def shift(fromTile, toTile):
     toTile.color = fromTile.color
     clear(fromTile)
     print("Shifted")
-    printGrid()
+    #printGrid()
     #set boolian to show that merge happened on keypress - used to verify before new rand tile generates.
     return True
 
@@ -114,7 +120,7 @@ def merge(fromTile, toTile):
     #mark that tile already changed to prevent the same tile from merging twice on same turn
     toTile.changed = True
     print("Merged")
-    printGrid()
+    #printGrid()
     #set boolian to show that merge happened on keypress - used to verify before new rand tile generates.
     return True
 
@@ -144,6 +150,9 @@ def loadGrid():
             j+=1
         j=0
         i+=1
+
+def populateGrid():
+    loadGrid()
     # randomly generate 2 tiles to start with value of 2
     rand_tiles = random.sample(range(tiles_across*tiles_across), 2)
     for tile in rand_tiles:
@@ -213,7 +222,7 @@ def removeLeft():
 def right():
     validTurn = False
     for row in tiles: 
-        for tile in row:
+        for tile in reversed(row):
             if tile.column != tiles_across-1 and tile.value !=0:
                 comp_tile = tiles[tile.row][tile.column+1]
                 if mergeOrShift(tile, comp_tile) == True:
@@ -223,7 +232,7 @@ def right():
 
 def removeRight():
     for row in tiles:
-        for tile in reversed(row):
+        for tile in row:
             #check for zero value tiles that are not in the first column and where the tile to the left is non-zero
             if tile.value == 0 and tile.column != 0 and tiles[tile.row][tile.column-1].value != 0:
                 comp_tile = tiles[tile.row][tile.column-1]
@@ -250,7 +259,7 @@ def removeUp():
 
 def down():
     validTurn = False
-    for row in tiles:
+    for row in reversed(tiles):
         for tile in row:
             if tile.row != tiles_across-1 and tile.value != 0:
                 comp_tile = tiles[tile.row+1][tile.column]
@@ -260,7 +269,7 @@ def down():
     return validTurn
 
 def removeDown():
-    for row in reversed(tiles):
+    for row in tiles:
         for tile in row:
             #check for zero value tiles that are not in the first row and where the tile above is non-zero
             if tile.value == 0 and tile.row != 0 and tiles[tile.row-1][tile.column].value != 0:
@@ -310,3 +319,5 @@ while running:
 
 #quit game while out of event loop
 pygame.quit()
+
+
