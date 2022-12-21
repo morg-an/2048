@@ -14,7 +14,7 @@ running = True
 #display variables
 size = width, height = (500, 500)
 game_board = pygame.display.set_mode(size)
-tiles_across = 3
+tiles_across = 4
 background_color = (245, 223, 187)
 tile_colors = {
     0:(231, 213, 181), 
@@ -66,8 +66,8 @@ def main():
     #update the display
     pygame.display.update()
     loadGrid()
-    #populateGrid()
-    setTestScenario()
+    populateGrid()
+    #setTestScenario()
 
     #draw tiles
     draw(game_board)
