@@ -20,6 +20,11 @@ def clear(fromTile):
     fromTile.value = 0
     fromTile.color = Constants.tile_colors[0]
 
+def reset(tiles):
+    for row in tiles:
+        for tile in row:
+            tile.changed = False
+
 def shift(fromTile, toTile):
     toTile.value = fromTile.value
     toTile.color = fromTile.color

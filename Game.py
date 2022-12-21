@@ -54,11 +54,6 @@ def isEndgame():
                 endgame = False
     return endgame
 
-def reset():
-    for row in tiles:
-        for tile in row:
-            tile.changed = False
-
 #event loop
 main()
 
@@ -90,7 +85,7 @@ while running:
                 running = False
             else:
                 print("That is not a valid input.")
-            reset()
+            TileManipulation.reset(tiles)
             if isEndgame() == False:
                 if validTurn == True:
                     #only generate new tile if last turn merged or shifted an existing tile.
