@@ -2,6 +2,7 @@ import pygame
 import random
 import math
 import Constants
+import Setup
 import Testing
 
 #create variable to control when game is running
@@ -24,30 +25,12 @@ def main():
 
     #update the display
     pygame.display.update()
-    loadGrid()
+    Setup.loadGrid(tiles)
     populateGrid()
     #Testing.setTestScenario(tiles)
 
     #draw tiles
     draw(game_board)
-
-class Tile:
-    def __init__(self, value, color, row, column) -> None:
-        self.value = value
-        self.color = color
-        self.row = row
-        self.column = column
-        self.coordinate = [int((Constants.width*.05)+(((Constants.width*.9)/Constants.tiles_across)*column)), 
-        int((Constants.height*.05)+(((Constants.height*.9)/Constants.tiles_across)*row))]
-        #tile.changed is used to prevent the same file from merging twice on the same turn.
-        self.changed = False
-
-    def toString(self):
-        return("Value: ", str(self.value),
-        "; Color: ", str(self.color), 
-        "; Row: ", str(self.row), 
-        "; Column: ", str(self.column), 
-        "; Coordinate: ", str(self.coordinate))
 
 def draw(game_board):
     font = pygame.font.Font(None, 36)
@@ -104,18 +87,6 @@ def mergeOrShift(tile, comp_tile):
 #     pygame.draw.rect(game_board, comparison[3], (comparison[1][0], comparison[1][1], tile_size[0], tile_size[1]))
 #     #display update
 #     pygame.display.update
-
-def loadGrid():
-    i = 0
-    j = 0
-    while i < Constants.tiles_across:
-        tiles.append([])
-        while j < Constants.tiles_across:
-            tiles[i].append(Tile(0, Constants.tile_colors[0], i, j))
-            j+=1
-        j=0
-        i+=1
-    #return tiles
 
 def populateGrid():
     # randomly generate 2 tiles to start with value of 2
