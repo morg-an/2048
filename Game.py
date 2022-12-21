@@ -5,9 +5,7 @@ import Constants
 import Setup
 import Testing
 
-#create variable to control when game is running
 running = True
-
 game_board = pygame.display.set_mode(Constants.size)
 tiles = []
 
@@ -25,11 +23,15 @@ def main():
 
     #update the display
     pygame.display.update()
-    Setup.loadGrid(tiles)
-    Setup.populateGrid(tiles)
-    #Testing.setTestScenario(tiles)
 
-    #draw tiles
+    #generate the tile objects for the game board
+    Setup.loadGrid(tiles)
+
+    # To toggle between random and testing setups, comment out one of the following two lines:
+    #Setup.populateGrid(tiles)
+    Testing.setTestScenario(tiles)
+
+    #draw tiles to the game board
     draw(game_board)
 
 def draw(game_board):
