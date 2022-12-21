@@ -26,7 +26,7 @@ def main():
     #update the display
     pygame.display.update()
     Setup.loadGrid(tiles)
-    populateGrid()
+    Setup.populateGrid(tiles)
     #Testing.setTestScenario(tiles)
 
     #draw tiles
@@ -79,27 +79,6 @@ def mergeOrShift(tile, comp_tile):
         return(shift(tile, comp_tile))
     else:
         return False
-
-# def redraw():
-#     #redraw the tile
-#     pygame.draw.rect(game_board, tile[3], (tile[1][0], tile[1][1], tile_size[0], tile_size[1]))
-#     #redraw the comparison
-#     pygame.draw.rect(game_board, comparison[3], (comparison[1][0], comparison[1][1], tile_size[0], tile_size[1]))
-#     #display update
-#     pygame.display.update
-
-def populateGrid():
-    # randomly generate 2 tiles to start with value of 2
-    rand_tiles = random.sample(range(Constants.tiles_across*Constants.tiles_across), 2)
-    for tile in rand_tiles:
-        # calculates what row the random tile is in by dividing the rand number by the grid width
-        row = math.floor(tile/Constants.tiles_across)
-        # calculates the column of the rand tile by finding the remainder after dividing by grid width
-        column = tile%Constants.tiles_across
-        # assign value of rand tiles to 2
-        tiles[row][column].value = 2
-        tiles[row][column].color = Constants.tile_colors[2]
-    return tiles
 
 def isEndgame():
 # identify if all tiles contain value >= 2
@@ -255,5 +234,3 @@ while running:
 
 #quit game while out of event loop
 pygame.quit()
-
-

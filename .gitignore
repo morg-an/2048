@@ -1,3 +1,6 @@
 __pycache__/Constants.cpython-310.pyc
 __pycache__/Helper.cpython-310.pyc
 __pycache__/Testing.cpython-310.pyc
+__pycache__/Classes.cpython-310.pyc
+__pycache__/Setup.cpython-310.pyc
+.gitignore
