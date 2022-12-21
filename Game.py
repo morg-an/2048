@@ -2,6 +2,7 @@ import pygame
 import random
 import math
 import Constants
+import Testing
 
 #create variable to control when game is running
 running = True
@@ -19,26 +20,13 @@ def main():
     #converting the background speeds up rendering
     background = background.convert()
     background.fill(Constants.background_color)
-
-    #display text
-    #   Step 1: Set font
-    # font = pygame.font.Font(None, 36)
-    #   Step 2: Set text content, aliased(?), and color
-    #text = font.render("Let's Play 2048!", True, tile_colors[2048])
-    #   Step 3: set rectangle as container for text
-    #textpos = text.get_rect()
-    #   Step 4: position the text
-    #textpos.center = background.get_rect().center
-    #   Step 5: render the text to the background
-    #background.blit(text, textpos)
-    #   Step 6: render the background to the game board
     game_board.blit(background, (0,0))
 
     #update the display
     pygame.display.update()
     loadGrid()
     populateGrid()
-    #setTestScenario()
+    #Testing.setTestScenario(tiles)
 
     #draw tiles
     draw(game_board)
@@ -140,17 +128,6 @@ def populateGrid():
         # assign value of rand tiles to 2
         tiles[row][column].value = 2
         tiles[row][column].color = Constants.tile_colors[2]
-    return tiles
-
-def setTestScenario():
-    value2 = [tiles[3][0], tiles[3][1], tiles[3][2]]
-    value4 = []
-    for tile in value2:
-        tile.value = 2
-        tile.color = Constants.tile_colors[2]
-    for tile in value4:
-        tile.value = 4
-        tile.color = Constants.tile_colors[4]
     return tiles
 
 def isEndgame():
