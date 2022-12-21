@@ -1,5 +1,8 @@
+import Helper 
+
 size = width, height = (500, 500)
 tiles_across = 4
+tile_size = Helper.generateTileSize(width, height, tiles_across)
 background_color = (245, 223, 187)
 tile_colors = {
     0:(231, 213, 181), 

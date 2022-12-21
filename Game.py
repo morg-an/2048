@@ -1,9 +1,3 @@
-# STILL TO Fix:
-# Remove empty tiles at end of the turn does not work correctly when there are 2 or more '0' value tiles in a row. 
-# For example a row of [16, 0, 0, 4] will become [0, 16, 0, 4] after removeRight()
-
-# colors for 512 and 32 are too similar
-
 import pygame
 import random
 import math
@@ -12,16 +6,8 @@ import Constants
 #create variable to control when game is running
 running = True
 
-#display variables
-
 game_board = pygame.display.set_mode(Constants.size)
 tiles = []
-
-def generateTileSize(tiles_across):
-    tile_size = (int((Constants.width*.8)/tiles_across), int((Constants.height*.8)/tiles_across))
-    return tile_size
-
-tile_size = generateTileSize(Constants.tiles_across)
 
 def main():
     #initialize screen
@@ -79,7 +65,7 @@ def draw(game_board):
     font = pygame.font.Font(None, 36)
     for row in tiles:
         for tile in row:
-            pygame.draw.rect(game_board, tile.color, (tile.coordinate[0], tile.coordinate[1], tile_size[0], tile_size[1]))
+            pygame.draw.rect(game_board, tile.color, (tile.coordinate[0], tile.coordinate[1], Constants.tile_size[0], Constants.tile_size[1]))
             text_surface = font.render(str(tile.value), False, (255, 255, 255))
             textpos = text_surface.get_rect()
             textpos.center = text_surface.get_rect().center
