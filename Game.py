@@ -7,36 +7,21 @@
 import pygame
 import random
 import math
+import Constants
 
 #create variable to control when game is running
 running = True
 
 #display variables
-size = width, height = (500, 500)
-game_board = pygame.display.set_mode(size)
-tiles_across = 4
-background_color = (245, 223, 187)
-tile_colors = {
-    0:(231, 213, 181), 
-    2:(148,93,94), 
-    4:(113,103,124), 
-    8:(39,60,44), 
-    16:(14,149,148), 
-    32:(177,116,15), 
-    64:(239,118,122), 
-    128:(9,12,155), 
-    256:(94,11,21), 
-    512:(190,124,77),
-    1024: (196,32,33), 
-    2048: (247,92,3),
-    4096: (15, 240, 8)} 
+
+game_board = pygame.display.set_mode(Constants.size)
 tiles = []
 
 def generateTileSize(tiles_across):
-    tile_size = (int((width*.8)/tiles_across), int((height*.8)/tiles_across))
+    tile_size = (int((Constants.width*.8)/tiles_across), int((Constants.height*.8)/tiles_across))
     return tile_size
 
-tile_size = generateTileSize(tiles_across)
+tile_size = generateTileSize(Constants.tiles_across)
 
 def main():
     #initialize screen
@@ -44,10 +29,10 @@ def main():
     pygame.display.set_caption('2048')
 
     #set background
-    background = pygame.Surface(size)
+    background = pygame.Surface(Constants.size)
     #converting the background speeds up rendering
     background = background.convert()
-    background.fill(background_color)
+    background.fill(Constants.background_color)
 
     #display text
     #   Step 1: Set font
@@ -78,7 +63,8 @@ class Tile:
         self.color = color
         self.row = row
         self.column = column
-        self.coordinate = [int((width*.05)+(((width*.9)/tiles_across)*column)), int((height*.05)+(((height*.9)/tiles_across)*row))]
+        self.coordinate = [int((Constants.width*.05)+(((Constants.width*.9)/Constants.tiles_across)*column)), 
+        int((Constants.height*.05)+(((Constants.height*.9)/Constants.tiles_across)*row))]
         #tile.changed is used to prevent the same file from merging twice on the same turn.
         self.changed = False
 
@@ -104,7 +90,7 @@ def draw(game_board):
 def clear(fromTile):
     #use to reset value and color of tile
     fromTile.value = 0
-    fromTile.color = tile_colors[0]
+    fromTile.color = Constants.tile_colors[0]
 
 def shift(fromTile, toTile):
     toTile.value = fromTile.value
@@ -119,7 +105,7 @@ def shift(fromTile, toTile):
 def merge(fromTile, toTile):
     #multiply value by 2 and increment color
     toTile.value = fromTile.value*2
-    toTile.color = tile_colors[toTile.value]
+    toTile.color = Constants.tile_colors[toTile.value]
     clear(fromTile)
     #mark that tile already changed to prevent the same tile from merging twice on same turn
     toTile.changed = True
@@ -148,10 +134,10 @@ def mergeOrShift(tile, comp_tile):
 def loadGrid():
     i = 0
     j = 0
-    while i < tiles_across:
+    while i < Constants.tiles_across:
         tiles.append([])
-        while j < tiles_across:
-            tiles[i].append(Tile(0, tile_colors[0], i, j))
+        while j < Constants.tiles_across:
+            tiles[i].append(Tile(0, Constants.tile_colors[0], i, j))
             j+=1
         j=0
         i+=1
@@ -159,15 +145,15 @@ def loadGrid():
 
 def populateGrid():
     # randomly generate 2 tiles to start with value of 2
-    rand_tiles = random.sample(range(tiles_across*tiles_across), 2)
+    rand_tiles = random.sample(range(Constants.tiles_across*Constants.tiles_across), 2)
     for tile in rand_tiles:
         # calculates what row the random tile is in by dividing the rand number by the grid width
-        row = math.floor(tile/tiles_across)
+        row = math.floor(tile/Constants.tiles_across)
         # calculates the column of the rand tile by finding the remainder after dividing by grid width
-        column = tile%tiles_across
+        column = tile%Constants.tiles_across
         # assign value of rand tiles to 2
         tiles[row][column].value = 2
-        tiles[row][column].color = tile_colors[2]
+        tiles[row][column].color = Constants.tile_colors[2]
     return tiles
 
 def setTestScenario():
@@ -175,10 +161,10 @@ def setTestScenario():
     value4 = []
     for tile in value2:
         tile.value = 2
-        tile.color = tile_colors[2]
+        tile.color = Constants.tile_colors[2]
     for tile in value4:
         tile.value = 4
-        tile.color = tile_colors[4]
+        tile.color = Constants.tile_colors[4]
     return tiles
 
 def isEndgame():
@@ -192,15 +178,15 @@ def isEndgame():
 
 def newTile():
 #random generate new tile for each turn
-    rand_x = random.randint(0, tiles_across-1)
-    rand_y = random.randint(0, tiles_across-1)
+    rand_x = random.randint(0, Constants.tiles_across-1)
+    rand_y = random.randint(0, Constants.tiles_across-1)
     #if the randomly generated tile is not zero, generate a new random tile
     while tiles[rand_x][rand_y].value != 0:
-        rand_x = random.randint(0, tiles_across-1)
-        rand_y = random.randint(0, tiles_across-1)
+        rand_x = random.randint(0, Constants.tiles_across-1)
+        rand_y = random.randint(0, Constants.tiles_across-1)
     #set the value & color of new randomly generated tile. 
     tiles[rand_x][rand_y].value = 2
-    tiles[rand_x][rand_y].color = tile_colors[2]
+    tiles[rand_x][rand_y].color = Constants.tile_colors[2]
     print("add value to random empty tile")
     return tiles[rand_x][rand_y]
 
@@ -231,7 +217,7 @@ def removeLeft():
     for row in tiles:
         for tile in row:
             #check for zero value tiles that are not in the last column and where the tile to the right is non-zero
-            if tile.value == 0 and tile.column != tiles_across-1 and tiles[tile.row][tile.column+1].value != 0:
+            if tile.value == 0 and tile.column != Constants.tiles_across-1 and tiles[tile.row][tile.column+1].value != 0:
                 comp_tile = tiles[tile.row][tile.column+1]
                 shift(comp_tile, tile)
 
@@ -239,7 +225,7 @@ def right():
     validTurn = False
     for row in tiles: 
         for tile in reversed(row):
-            if tile.column != tiles_across-1 and tile.value !=0:
+            if tile.column != Constants.tiles_across-1 and tile.value !=0:
                 comp_tile = tiles[tile.row][tile.column+1]
                 if mergeOrShift(tile, comp_tile) == True:
                     validTurn = True
@@ -269,7 +255,7 @@ def removeUp():
     for row in tiles:
         for tile in row:
             #check for zero value tiles that are not in the last row and where the tile below is non-zero
-            if tile.value == 0 and tile.row != tiles_across-1 and tiles[tile.row+1][tile.column].value != 0:
+            if tile.value == 0 and tile.row != Constants.tiles_across-1 and tiles[tile.row+1][tile.column].value != 0:
                 comp_tile = tiles[tile.row+1][tile.column]
                 shift(comp_tile, tile)
 
@@ -277,7 +263,7 @@ def down():
     validTurn = False
     for row in reversed(tiles):
         for tile in row:
-            if tile.row != tiles_across-1 and tile.value != 0:
+            if tile.row != Constants.tiles_across-1 and tile.value != 0:
                 comp_tile = tiles[tile.row+1][tile.column]
                 if mergeOrShift(tile, comp_tile) == True:
                     validTurn = True
