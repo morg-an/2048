@@ -14,7 +14,7 @@ running = True
 #display variables
 size = width, height = (500, 500)
 game_board = pygame.display.set_mode(size)
-tiles_across = 4
+tiles_across = 3
 background_color = (245, 223, 187)
 tile_colors = {
     0:(231, 213, 181), 
@@ -28,7 +28,8 @@ tile_colors = {
     256:(94,11,21), 
     512:(190,124,77),
     1024: (196,32,33), 
-    2048: (247,92,3)} 
+    2048: (247,92,3),
+    4096: (15, 240, 8)} 
 tiles = []
 
 def generateTileSize(tiles_across):
@@ -64,7 +65,9 @@ def main():
 
     #update the display
     pygame.display.update()
-    populateGrid()
+    loadGrid()
+    #populateGrid()
+    setTestScenario()
 
     #draw tiles
     draw(game_board)
@@ -107,7 +110,8 @@ def shift(fromTile, toTile):
     toTile.value = fromTile.value
     toTile.color = fromTile.color
     clear(fromTile)
-    print("Shifted")
+    print("Shifted from: Row ", fromTile.row, "Column ", fromTile.column)
+    print("shifted to: Row", toTile.row, "Column ", toTile.column)
     #printGrid()
     #set boolian to show that merge happened on keypress - used to verify before new rand tile generates.
     return True
@@ -119,7 +123,8 @@ def merge(fromTile, toTile):
     clear(fromTile)
     #mark that tile already changed to prevent the same tile from merging twice on same turn
     toTile.changed = True
-    print("Merged")
+    print("Merged from: Row ", fromTile.row, "Column ", fromTile.column)
+    print("Merged to: Row", toTile.row, "Column ", toTile.column)
     #printGrid()
     #set boolian to show that merge happened on keypress - used to verify before new rand tile generates.
     return True
@@ -150,9 +155,9 @@ def loadGrid():
             j+=1
         j=0
         i+=1
+    #return tiles
 
 def populateGrid():
-    loadGrid()
     # randomly generate 2 tiles to start with value of 2
     rand_tiles = random.sample(range(tiles_across*tiles_across), 2)
     for tile in rand_tiles:
@@ -163,6 +168,17 @@ def populateGrid():
         # assign value of rand tiles to 2
         tiles[row][column].value = 2
         tiles[row][column].color = tile_colors[2]
+    return tiles
+
+def setTestScenario():
+    value2 = [tiles[3][0], tiles[3][1], tiles[3][2]]
+    value4 = []
+    for tile in value2:
+        tile.value = 2
+        tile.color = tile_colors[2]
+    for tile in value4:
+        tile.value = 4
+        tile.color = tile_colors[4]
     return tiles
 
 def isEndgame():
@@ -203,7 +219,7 @@ def reset():
 def left():
     validTurn = False
     for row in tiles:
-        for tile in reversed(row):
+        for tile in row:
             if tile.column != 0 and tile.value != 0:
                 comp_tile = tiles[tile.row][tile.column-1]
                 if mergeOrShift(tile, comp_tile) == True:
