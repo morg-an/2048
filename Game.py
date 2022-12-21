@@ -104,13 +104,6 @@ def newTile():
     print("add value to random empty tile")
     return tiles[rand_x][rand_y]
 
-
-def printGrid():
-    for row in tiles:
-        print("New Row")
-        for tile in row:
-            print(tile.toString())
-
 def reset():
     for row in tiles:
         for tile in row:
