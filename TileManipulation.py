@@ -48,15 +48,31 @@ def merge(fromTile, toTile):
     #set boolian to show that merge happened on keypress - used to verify before new rand tile generates.
     return True
 
-def mergeOrShift(tile, comp_tile, prior_comp_tile):
-    if comp_tile.value == tile.value and tile.changed == False:
-        return(merge(tile, comp_tile))
+def mergeOrShift(tile, comp_tile, prior_comp_tile, adjacentComparison):
+    validTurn = False
+    #if the value of the comparison tile is the same, merge
+    if comp_tile.value == tile.value:
+        print("The tiles will merge because they have the same values (", tile.value, ")")
+        merge(tile, comp_tile)
+        validTurn = True
+    #if the value of an adjacent comparison value is different, but non-zero, do nothinng.
+    elif comp_tile.value != 0 and comp_tile.value != tile.value and adjacentComparison == True:
+        print("The tiles won't merge or shift because the adjacent comparison tile has a different value.")
+    #if the value of a non-adjacent comparisn value is different, but non-zero,
+    #   shift to tile immediately to the right of the comparison tile (which should have a non-zero value).
+    elif comp_tile.value != 0 and comp_tile.value != tile.value and adjacentComparison == False:
+        comp_tile = prior_comp_tile
+        print("The non-adjacent comp tile has a non-zero and non-matching value, so tile will shift to new comp_tile (column: ", comp_tile.column, ")")
+        shift(tile, comp_tile)
+        validTurn = True
+    #if comparison value is empty, shift to the comparison tile
     elif comp_tile.value == 0:
-        return(shift(tile, comp_tile))
-    elif comp_tile.value != 0 and comp_tile.value != tile.value:
-        return(shift(tile, prior_comp_tile))
+        print("Tile will shift to the empty comp tile.")
+        shift(tile, comp_tile)
+        validTurn = True
     else:
-        return False
+        print("Something went wrong.")      
+    return validTurn
 
 def left(tiles):
     validTurn = False
@@ -72,6 +88,7 @@ def left(tiles):
                 if tile.column-1 >= 0:
                     adjacentComparison = True
                     comp_tile = tiles[tile.row][tile.column-1]
+                    prior_comp_tile = ""
                     print("This tile is not in the first column, so the comparison tile is in Column ", comp_tile.column, " and has a value of ", comp_tile.value)
                     #if the value of the comparison tile is zero
                     if comp_tile.value == 0:
@@ -85,30 +102,8 @@ def left(tiles):
                             print("Comparison Tile changed to Row: ", comp_tile.row, "Column: ", comp_tile.column)
                             i += 1
                         print("Final Comparison Tile at Row: ", comp_tile.row, " Column: ", comp_tile.column)
-                    #if the value of the comparison tile is the same, merge
-                    if comp_tile.value == tile.value:
-                        print("The tiles will merge because they have the same values (", tile.value, ")")
-                        merge(tile, comp_tile)
+                    if mergeOrShift(tile, comp_tile, prior_comp_tile, adjacentComparison):
                         validTurn = True
-                    #if the value of an adjacent comparison value is different, but non-zero, do nothinng.
-                    elif comp_tile.value != 0 and comp_tile.value != tile.value and adjacentComparison == True:
-                        print("The tiles won't merge or shift because the adjacent comparison tile has a different value.")
-                        continue
-                    #if the value of a non-adjacent comparisn value is different, but non-zero,
-                    #   shift to tile immediately to the right of the comparison tile (which should have a non-zero value).
-                    elif comp_tile.value != 0 and comp_tile.value != tile.value and adjacentComparison == False:
-                        comp_tile = prior_comp_tile
-                        print("The non-adjacent comp tile has a non-zero and non-matching value, so tile will shift to new comp_tile (column: ", comp_tile.column, ")")
-                        shift(tile, comp_tile)
-                        validTurn = True
-                    #if comparison value is empty, shift to the comparison tile
-                    elif comp_tile.value == 0:
-                        print("Tile will shift to the empty comp tile.")
-                        shift(tile, comp_tile)
-                        validTurn = True
-                    else:
-                        print("Something went wrong.")                    
-                #if there is no tile to the left, break and move to check the next tile
                 else:
                     continue
     return validTurn
@@ -127,6 +122,7 @@ def right(tiles):
                 if tile.column+1 < Constants.tiles_across:
                     adjacentComparison = True
                     comp_tile = tiles[tile.row][tile.column+1]
+                    prior_comp_tile = ""
                     print("This tile is not in the last column, so the comparison tile is in Column ", comp_tile.column, " and has a value of ", comp_tile.value)
                     #if the value of the comparison tile is zero
                     if comp_tile.value == 0:
@@ -140,30 +136,8 @@ def right(tiles):
                             print("Comparison Tile changed to Row: ", comp_tile.row, "Column: ", comp_tile.column)
                             i += 1
                         print("Final Comparison Tile at Row: ", comp_tile.row, " Column: ", comp_tile.column)
-                    #if the value of the comparison tile is the same, merge
-                    if comp_tile.value == tile.value:
-                        print("The tiles will merge because they have the same values (", tile.value, ")")
-                        merge(tile, comp_tile)
+                    if mergeOrShift(tile, comp_tile, prior_comp_tile, adjacentComparison):
                         validTurn = True
-                    #if the value of an adjacent comparison value is different, but non-zero, do nothinng.
-                    elif comp_tile.value != 0 and comp_tile.value != tile.value and adjacentComparison == True:
-                        print("The tiles won't merge or shift because the adjacent comparison tile has a different value.")
-                        continue
-                    #if the value of a non-adjacent comparisn value is different, but non-zero,
-                    #   shift to tile immediately to the right of the comparison tile (which should have a non-zero value).
-                    elif comp_tile.value != 0 and comp_tile.value != tile.value and adjacentComparison == False:
-                        comp_tile = prior_comp_tile
-                        print("The non-adjacent comp tile has a non-zero and non-matching value, so tile will shift to new comp_tile (column: ", comp_tile.column, ")")
-                        shift(tile, comp_tile)
-                        validTurn = True
-                    #if comparison value is empty, shift to the comparison tile
-                    elif comp_tile.value == 0:
-                        print("Tile will shift to the empty comp tile.")
-                        shift(tile, comp_tile)
-                        validTurn = True
-                    else:
-                        print("Something went wrong.")                    
-                #if there is no tile to the left, break and move to check the next tile
                 else:
                     continue
     return validTurn
@@ -182,6 +156,7 @@ def up(tiles):
                 if tile.row-1 >= 0:
                     adjacentComparison = True
                     comp_tile = tiles[tile.row-1][tile.column]
+                    prior_comp_tile = ""
                     print("This tile is not in the first row, so the comparison tile is in Row ", comp_tile.row, " and has a value of ", comp_tile.value)
                     #if the value of the comparison tile is zero
                     if comp_tile.value == 0:
@@ -195,30 +170,8 @@ def up(tiles):
                             print("Comparison Tile changed to Row: ", comp_tile.row, "Column: ", comp_tile.column)
                             i += 1
                         print("Final Comparison Tile at Row: ", comp_tile.row, " Column: ", comp_tile.column)
-                    #if the value of the comparison tile is the same, merge
-                    if comp_tile.value == tile.value:
-                        print("The tiles will merge because they have the same values (", tile.value, ")")
-                        merge(tile, comp_tile)
+                    if mergeOrShift(tile, comp_tile, prior_comp_tile, adjacentComparison):
                         validTurn = True
-                    #if the value of an adjacent comparison value is different, but non-zero, do nothinng.
-                    elif comp_tile.value != 0 and comp_tile.value != tile.value and adjacentComparison == True:
-                        print("The tiles won't merge or shift because the adjacent comparison tile has a different value.")
-                        continue
-                    #if the value of a non-adjacent comparisn value is different, but non-zero,
-                    #   shift to tile immediately below the comparison tile (which should have a non-zero value).
-                    elif comp_tile.value != 0 and comp_tile.value != tile.value and adjacentComparison == False:
-                        comp_tile = prior_comp_tile
-                        print("The non-adjacent comp tile has a non-zero and non-matching value, so tile will shift to new comp_tile (column: ", comp_tile.column, ")")
-                        shift(tile, comp_tile)
-                        validTurn = True
-                    #if comparison value is empty, shift to the comparison tile
-                    elif comp_tile.value == 0:
-                        print("Tile will shift to the empty comp tile.")
-                        shift(tile, comp_tile)
-                        validTurn = True
-                    else:
-                        print("Something went wrong.")                    
-                #if there is no tile to the left, break and move to check the next tile
                 else:
                     continue
     return validTurn
@@ -237,6 +190,7 @@ def down(tiles):
                 if tile.row+1 < Constants.tiles_across:
                     adjacentComparison = True
                     comp_tile = tiles[tile.row+1][tile.column]
+                    prior_comp_tile = ""
                     print("This tile is not in the first row, so the comparison tile is in Row ", comp_tile.row, " and has a value of ", comp_tile.value)
                     #if the value of the comparison tile is zero
                     if comp_tile.value == 0:
@@ -250,30 +204,8 @@ def down(tiles):
                             print("Comparison Tile changed to Row: ", comp_tile.row, "Column: ", comp_tile.column)
                             i += 1
                         print("Final Comparison Tile at Row: ", comp_tile.row, " Column: ", comp_tile.column)
-                    #if the value of the comparison tile is the same, merge
-                    if comp_tile.value == tile.value:
-                        print("The tiles will merge because they have the same values (", tile.value, ")")
-                        merge(tile, comp_tile)
+                    if mergeOrShift(tile, comp_tile, prior_comp_tile, adjacentComparison):
                         validTurn = True
-                    #if the value of an adjacent comparison value is different, but non-zero, do nothinng.
-                    elif comp_tile.value != 0 and comp_tile.value != tile.value and adjacentComparison == True:
-                        print("The tiles won't merge or shift because the adjacent comparison tile has a different value.")
-                        continue
-                    #if the value of a non-adjacent comparisn value is different, but non-zero,
-                    #   shift to tile immediately below the comparison tile (which should have a non-zero value).
-                    elif comp_tile.value != 0 and comp_tile.value != tile.value and adjacentComparison == False:
-                        comp_tile = prior_comp_tile
-                        print("The non-adjacent comp tile has a non-zero and non-matching value, so tile will shift to new comp_tile (column: ", comp_tile.column, ")")
-                        shift(tile, comp_tile)
-                        validTurn = True
-                    #if comparison value is empty, shift to the comparison tile
-                    elif comp_tile.value == 0:
-                        print("Tile will shift to the empty comp tile.")
-                        shift(tile, comp_tile)
-                        validTurn = True
-                    else:
-                        print("Something went wrong.")                    
-                #if there is no tile to the left, break and move to check the next tile
                 else:
                     continue
     return validTurn
