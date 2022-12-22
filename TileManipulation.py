@@ -44,28 +44,16 @@ def merge(fromTile, toTile):
 
 def mergeOrShift(tile, comp_tile, prior_comp_tile, adjacentComparison):
     validTurn = False
-    #if the value of the comparison tile is the same, merge
     if comp_tile.value == tile.value:
-        print("The tiles will merge because they have the same values (", tile.value, ")")
         merge(tile, comp_tile)
         validTurn = True
-    #if the value of an adjacent comparison value is different, but non-zero, do nothinng.
-    elif comp_tile.value != 0 and comp_tile.value != tile.value and adjacentComparison == True:
-        print("The tiles won't merge or shift because the adjacent comparison tile has a different value.")
-    #if the value of a non-adjacent comparisn value is different, but non-zero,
-    #   shift to tile immediately to the right of the comparison tile (which should have a non-zero value).
     elif comp_tile.value != 0 and comp_tile.value != tile.value and adjacentComparison == False:
         comp_tile = prior_comp_tile
-        print("The non-adjacent comp tile has a non-zero and non-matching value, so tile will shift to new comp_tile (column: ", comp_tile.column, ")")
         shift(tile, comp_tile)
         validTurn = True
-    #if comparison value is empty, shift to the comparison tile
     elif comp_tile.value == 0:
-        print("Tile will shift to the empty comp tile.")
         shift(tile, comp_tile)
         validTurn = True
-    else:
-        print("Something went wrong.")      
     return validTurn
 
 def left(tiles):
