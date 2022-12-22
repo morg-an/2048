@@ -31,9 +31,6 @@ def shift(fromTile, toTile):
     clear(fromTile)
     print("Shifted from: Row ", fromTile.row, "Column ", fromTile.column)
     print("shifted to: Row", toTile.row, "Column ", toTile.column)
-    #printGrid()
-    #set boolian to show that merge happened on keypress - used to verify before new rand tile generates.
-    return True
 
 def merge(fromTile, toTile):
     #multiply value by 2 and increment color
@@ -44,9 +41,6 @@ def merge(fromTile, toTile):
     toTile.changed = True
     print("Merged from: Row ", fromTile.row, "Column ", fromTile.column)
     print("Merged to: Row", toTile.row, "Column ", toTile.column)
-    #printGrid()
-    #set boolian to show that merge happened on keypress - used to verify before new rand tile generates.
-    return True
 
 def mergeOrShift(tile, comp_tile, prior_comp_tile, adjacentComparison):
     validTurn = False
@@ -179,33 +173,25 @@ def up(tiles):
 def down(tiles):
     validTurn = False
     i = 1
-    #iterate through all tiles, bottom to top (reversed rows)
     for row in reversed(tiles):
         for tile in row:
-            print("Checking Row: ", tile.row, " Column: ", tile.column)
-            #identify if the tile has a value other than 0
-            if tile.value != 0:
-                print("This tile has a value of ", tile.value)
-                #check if there is a tile below, and if so set it as the comparison tile
-                if tile.row+1 < Constants.tiles_across:
-                    adjacentComparison = True
-                    comp_tile = tiles[tile.row+1][tile.column]
-                    prior_comp_tile = ""
-                    print("This tile is not in the first row, so the comparison tile is in Row ", comp_tile.row, " and has a value of ", comp_tile.value)
-                    #if the value of the comparison tile is zero
-                    if comp_tile.value == 0:
-                        print("The comparison tile is empty. Continue looking for new comparison.")
-                        i = 2
-                        #contine looping for as long as the comparison tile remains a value of zero and is not in the first row
-                        while comp_tile.value == 0 and comp_tile.row < Constants.tiles_across-1:
-                            adjacentComparison = False
-                            prior_comp_tile = comp_tile
-                            comp_tile = tiles[tile.row+i][tile.column]
-                            print("Comparison Tile changed to Row: ", comp_tile.row, "Column: ", comp_tile.column)
-                            i += 1
-                        print("Final Comparison Tile at Row: ", comp_tile.row, " Column: ", comp_tile.column)
-                    if mergeOrShift(tile, comp_tile, prior_comp_tile, adjacentComparison):
-                        validTurn = True
-                else:
-                    continue
+            if tile.value != 0 and tile.row+1 < Constants.tiles_across:
+                adjacentComparison = True
+                comp_tile = tiles[tile.row+1][tile.column]
+                prior_comp_tile = ""
+                print("This tile is not in the first row, so the comparison tile is in Row ", comp_tile.row, " and has a value of ", comp_tile.value)
+                if comp_tile.value == 0:
+                    print("The comparison tile is empty. Continue looking for new comparison.")
+                    i = 2
+                    while comp_tile.value == 0 and comp_tile.row < Constants.tiles_across-1:
+                        adjacentComparison = False
+                        prior_comp_tile = comp_tile
+                        comp_tile = tiles[tile.row+i][tile.column]
+                        print("Comparison Tile changed to Row: ", comp_tile.row, "Column: ", comp_tile.column)
+                        i += 1
+                    print("Final Comparison Tile at Row: ", comp_tile.row, " Column: ", comp_tile.column)
+                if mergeOrShift(tile, comp_tile, prior_comp_tile, adjacentComparison):
+                    validTurn = True
+            else:
+                continue
     return validTurn
