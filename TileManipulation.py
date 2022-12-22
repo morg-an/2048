@@ -105,35 +105,24 @@ def left(tiles):
 def right(tiles):
     validTurn = False
     i = 1
-    #iterate through all tiles, right to left (reversed columns)
     for row in tiles: 
         for tile in reversed(row):
-            print("Checking Row: ", tile.row, " Column: ", tile.column)
-            #identify if the tile has a value other than 0
-            if tile.value != 0:
-                print("This tile has a value of ", tile.value)
-                #check if there is a tile to the right, and if so set it as the comparison tile
-                if tile.column+1 < Constants.tiles_across:
-                    adjacentComparison = True
-                    comp_tile = tiles[tile.row][tile.column+1]
-                    prior_comp_tile = ""
-                    print("This tile is not in the last column, so the comparison tile is in Column ", comp_tile.column, " and has a value of ", comp_tile.value)
-                    #if the value of the comparison tile is zero
-                    if comp_tile.value == 0:
-                        print("The comparison tile is empty. Continue looking for new comparison.")
-                        i = 2
-                        #contine looping for as long as the comparison tile remains a value of zero and is not in the first column
-                        while comp_tile.value == 0 and comp_tile.column < Constants.tiles_across-1:
-                            adjacentComparison = False
-                            prior_comp_tile = comp_tile
-                            comp_tile = tiles[tile.row][tile.column+i]
-                            print("Comparison Tile changed to Row: ", comp_tile.row, "Column: ", comp_tile.column)
-                            i += 1
-                        print("Final Comparison Tile at Row: ", comp_tile.row, " Column: ", comp_tile.column)
-                    if mergeOrShift(tile, comp_tile, prior_comp_tile, adjacentComparison):
-                        validTurn = True
-                else:
-                    continue
+            if tile.value == 0:
+                continue
+            if tile.column+1 >= Constants.tiles_across:
+                continue
+            adjacentComparison = True
+            comp_tile = tiles[tile.row][tile.column+1]
+            prior_comp_tile = ""
+            if comp_tile.value == 0:
+                i = 2
+                while comp_tile.value == 0 and comp_tile.column < Constants.tiles_across-1:
+                    adjacentComparison = False
+                    prior_comp_tile = comp_tile
+                    comp_tile = tiles[tile.row][tile.column+i]
+                    i += 1
+            if mergeOrShift(tile, comp_tile, prior_comp_tile, adjacentComparison):
+                validTurn = True
     return validTurn
 
 def up(tiles):
