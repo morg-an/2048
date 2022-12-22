@@ -27,8 +27,8 @@ def main():
     Setup.loadGrid(tiles)
 
     # To toggle between random and testing setups, comment out one of the following two lines:
-    Setup.populateGrid(tiles)
-    #Testing.setTestScenario(tiles)
+    #Setup.populateGrid(tiles)
+    Testing.setTestScenario(tiles)
 
     #draw tiles to the game board
     draw(game_board)

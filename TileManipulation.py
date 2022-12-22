@@ -48,23 +48,112 @@ def merge(fromTile, toTile):
     #set boolian to show that merge happened on keypress - used to verify before new rand tile generates.
     return True
 
-def mergeOrShift(tile, comp_tile):
+def mergeOrShift(tile, comp_tile, prior_comp_tile):
     if comp_tile.value == tile.value and tile.changed == False:
         return(merge(tile, comp_tile))
     elif comp_tile.value == 0:
         return(shift(tile, comp_tile))
+    elif comp_tile.value != 0 and comp_tile.value != tile.value:
+        return(shift(tile, prior_comp_tile))
     else:
         return False
 
 def left(tiles):
     validTurn = False
+    i = 1
+    #iterate through all tiles, left to right
     for row in tiles:
         for tile in row:
-            if tile.column != 0 and tile.value != 0:
-                comp_tile = tiles[tile.row][tile.column-1]
+            print("Checking Row: ", tile.row, " Column: ", tile.column)
+            #identify if the tile has a value other than 0
+            if tile.value != 0:
+                print("This tile has a value of ", tile.value)
+                #check if there is a tile to the left, and if so set it as the comparison tile
+                if tile.column-1 >= 0:
+                    adjacentComparison = True
+                    comp_tile = tiles[tile.row][tile.column-1]
+                    print("This tile is not in the first column, so the comparison tile is in Column ", comp_tile.column, " and has a value of ", comp_tile.value)
+                    #if the value of the comparison tile is zero
+                    if comp_tile.value == 0:
+                        print("The comparison tile is empty. Continue looking for new comparison.")
+                        i = 2
+                        #contine looping for as long as the comparison tile remains a value of zero and is not in the first column
+                        while comp_tile.value == 0 and comp_tile.column > 0:
+                            adjacentComparison = False
+                            comp_tile = tiles[tile.row][tile.column-i]
+                            print("Comparison Tile changed to Row: ", comp_tile.row, "Column: ", comp_tile.column)
+                            i += 1
+                        print("Final Comparison Tile at Row: ", comp_tile.row, " Column: ", comp_tile.column)
+                    #if the value of the comparison tile is the same, merge
+                    if comp_tile.value == tile.value:
+                        print("The tiles will merge because they have the same values (", tile.value, ")")
+                        merge(tile, comp_tile)
+                        validTurn = True
+                    #if the value of an adjacent comparison value is different, but non-zero, do nothinng.
+                    elif comp_tile.value != 0 and comp_tile.value != tile.value and adjacentComparison == True:
+                        print("The tiles won't merge or shift because the adjacent comparison tile has a different value.")
+                        continue
+                    #if the value of a non-adjacent comparisn value is different, but non-zero,
+                    #   shift to tile immediately to the right of the comparison tile (which should have a non-zero value).
+                    elif comp_tile.value != 0 and comp_tile.value != tile.value and adjacentComparison == False:
+                        comp_tile = tiles[tile.row][tile.column-(i-2)]
+                        print("The non-adjacent comp tile has a non-zero and non-matching value, so tile will shift to new comp_tile (column: ", comp_tile.column, ")")
+                        shift(tile, comp_tile)
+                        validTurn = True
+                    #if comparison value is empty, shift to the comparison tile
+                    elif comp_tile.value == 0:
+                        print("Tile will shift to the empty comp tile.")
+                        shift(tile, comp_tile)
+                        validTurn = True
+                    else:
+                        print("Something went wrong.")                    
+                #if there is no tile to the left, break and move to check the next tile
+                else:
+                    continue
+    #removeLeft(tiles)
+    return validTurn
+
+def right(tiles):
+    validTurn = False
+    i = 1
+    #iterate through all tiles, right to left (reversed columns)
+    for row in tiles: 
+        for tile in reversed(row):
+            print("Checking Row: ", tile.row, " Column: ", tile.column)
+            #find a comparison tile for any tile that has a non-zero value and not in the right column
+            if tile.column != Constants.tiles_across-1 and tile.value !=0:
+                break
+    #removeRight(tiles)
+    return validTurn
+
+def up(tiles):
+    validTurn = False
+    i = 1
+    #iterate through all tiles, top to bottom
+    for row in tiles:
+        for tile in row:
+            print("Checking Row: ", tile.row, " Column: ", tile.column)
+            #find a comparison tile for any tile that has a non-zero value and not in the top row
+            if tile.row != 0 and tile.value != 0:
+                comp_tile = tiles[tile.row-1][tile.column]
                 if mergeOrShift(tile, comp_tile) == True:
                     validTurn = True
-    removeLeft(tiles)
+    #removeUp(tiles)
+    return validTurn
+
+def down(tiles):
+    validTurn = False
+    i = 1
+    #iterate through all tiles, bottom to top (reversed rows)
+    for row in reversed(tiles):
+        for tile in row:
+            print("Checking Row: ", tile.row, " Column: ", tile.column)
+            #find a comparison tile for any tile that has a non-zero value and not in the bottom row
+            if tile.row != Constants.tiles_across-1 and tile.value != 0:
+                comp_tile = tiles[tile.row+1][tile.column]
+                if mergeOrShift(tile, comp_tile) == True:
+                    validTurn = True
+    #removeDown(tiles)
     return validTurn
 
 def removeLeft(tiles):
@@ -75,17 +164,6 @@ def removeLeft(tiles):
                 comp_tile = tiles[tile.row][tile.column+1]
                 shift(comp_tile, tile)
 
-def right(tiles):
-    validTurn = False
-    for row in tiles: 
-        for tile in reversed(row):
-            if tile.column != Constants.tiles_across-1 and tile.value !=0:
-                comp_tile = tiles[tile.row][tile.column+1]
-                if mergeOrShift(tile, comp_tile) == True:
-                    validTurn = True
-    removeRight(tiles)
-    return validTurn
-
 def removeRight(tiles):
     for row in tiles:
         for tile in row:
@@ -94,17 +172,6 @@ def removeRight(tiles):
                 comp_tile = tiles[tile.row][tile.column-1]
                 shift(comp_tile, tile)
 
-def up(tiles):
-    validTurn = False
-    for row in reversed(tiles):
-        for tile in row:
-            if tile.row != 0 and tile.value != 0:
-                comp_tile = tiles[tile.row-1][tile.column]
-                if mergeOrShift(tile, comp_tile) == True:
-                    validTurn = True
-    removeUp(tiles)
-    return validTurn
-
 def removeUp(tiles):
     for row in tiles:
         for tile in row:
@@ -112,17 +179,6 @@ def removeUp(tiles):
             if tile.value == 0 and tile.row != Constants.tiles_across-1 and tiles[tile.row+1][tile.column].value != 0:
                 comp_tile = tiles[tile.row+1][tile.column]
                 shift(comp_tile, tile)
-
-def down(tiles):
-    validTurn = False
-    for row in reversed(tiles):
-        for tile in row:
-            if tile.row != Constants.tiles_across-1 and tile.value != 0:
-                comp_tile = tiles[tile.row+1][tile.column]
-                if mergeOrShift(tile, comp_tile) == True:
-                    validTurn = True
-    removeDown(tiles)
-    return validTurn
 
 def removeDown(tiles):
     for row in tiles:
