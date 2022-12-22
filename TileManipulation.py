@@ -16,7 +16,6 @@ def newRandTile(tiles):
     return tiles[rand_x][rand_y]
 
 def clear(fromTile):
-    #use to reset value and color of tile
     fromTile.value = 0
     fromTile.color = Constants.tile_colors[0]
 
@@ -29,18 +28,12 @@ def shift(fromTile, toTile):
     toTile.value = fromTile.value
     toTile.color = fromTile.color
     clear(fromTile)
-    print("Shifted from: Row ", fromTile.row, "Column ", fromTile.column)
-    print("shifted to: Row", toTile.row, "Column ", toTile.column)
 
 def merge(fromTile, toTile):
-    #multiply value by 2 and increment color
     toTile.value = fromTile.value*2
     toTile.color = Constants.tile_colors[toTile.value]
     clear(fromTile)
-    #mark that tile already changed to prevent the same tile from merging twice on same turn
     toTile.changed = True
-    print("Merged from: Row ", fromTile.row, "Column ", fromTile.column)
-    print("Merged to: Row", toTile.row, "Column ", toTile.column)
 
 def mergeOrShift(tile, comp_tile, prior_comp_tile, adjacentComparison):
     validTurn = False
