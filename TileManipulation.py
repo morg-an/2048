@@ -26,14 +26,19 @@ def shift(fromTile, toTile):
     clear(fromTile)
 
 def merge(fromTile, toTile):
-    toTile.value = fromTile.value*2
-    toTile.color = Constants.tile_colors[toTile.value]
-    clear(fromTile)
+    if toTile.changed == False:
+        toTile.value = fromTile.value*2
+        toTile.color = Constants.tile_colors[toTile.value]
+        clear(fromTile)
+    else:
+        print("From Row: ", fromTile.row, "Column: ", fromTile.column, "Changed? ", fromTile.changed)
+        print("To Row: ", toTile.row, "Column: ", toTile.column, "Changed? ", toTile.changed)
+        print("Didn't Merge - tile already changed.")
     toTile.changed = True
 
 def mergeOrShift(tile, comp_tile, prior_comp_tile, adjacentComparison):
     validTurn = False
-    if comp_tile.value == tile.value:
+    if comp_tile.value == tile.value: # and comp_tile.changed == False
         merge(tile, comp_tile)
         validTurn = True
     elif comp_tile.value != 0 and comp_tile.value != tile.value and adjacentComparison == False:
@@ -60,7 +65,7 @@ def left(tiles):
             prior_comp_tile = ""
             if comp_tile.value == 0:
                 i = 2
-                while comp_tile.value == 0 and comp_tile.column > 0:
+                while comp_tile.value == 0 and comp_tile.column > 0 and tiles[tile.row][tile.column-i].changed == False:
                     adjacentComparison = False
                     prior_comp_tile = comp_tile
                     comp_tile = tiles[tile.row][tile.column-i]
@@ -83,7 +88,7 @@ def right(tiles):
             prior_comp_tile = ""
             if comp_tile.value == 0:
                 i = 2
-                while comp_tile.value == 0 and comp_tile.column < Constants.tiles_across-1:
+                while comp_tile.value == 0 and comp_tile.column < Constants.tiles_across-1 and tiles[tile.row][tile.column+i].changed == False:
                     adjacentComparison = False
                     prior_comp_tile = comp_tile
                     comp_tile = tiles[tile.row][tile.column+i]
@@ -106,7 +111,7 @@ def up(tiles):
             prior_comp_tile = ""
             if comp_tile.value == 0:
                 i = 2
-                while comp_tile.value == 0 and comp_tile.row > 0:
+                while comp_tile.value == 0 and comp_tile.row > 0 and tiles[tile.row-i][tile.column].changed == False:
                     adjacentComparison = False
                     prior_comp_tile = comp_tile
                     comp_tile = tiles[tile.row-i][tile.column]
@@ -129,7 +134,7 @@ def down(tiles):
             prior_comp_tile = ""
             if comp_tile.value == 0:
                 i = 2
-                while comp_tile.value == 0 and comp_tile.row < Constants.tiles_across-1:
+                while comp_tile.value == 0 and comp_tile.row < Constants.tiles_across-1 and tiles[tile.row+i][tile.column].changed == False:
                     adjacentComparison = False
                     prior_comp_tile = comp_tile
                     comp_tile = tiles[tile.row+i][tile.column]
